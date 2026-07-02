@@ -30,7 +30,7 @@ def get_location_name(latitude, longitude):
 st.sidebar.header(" Simulation Core Mode")
 app_mode = st.sidebar.radio("Select Analytics View:", ["Single City Deep-Dive", "Multi-City Contrast Analytics"])
 
-st.sidebar.header("Timeline Parameters")
+st.sidebar.header(" Timeline Parameters")
 start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2025-07-01"))
 end_date = st.sidebar.date_input("End Date", pd.to_datetime("2025-07-20"))
 
@@ -46,7 +46,7 @@ if blood_pressure_state == "Normotensive (120 mmHg Systolic)":
 elif blood_pressure_state == "Pre-Hypertensive (135 mmHg Systolic)":
     shear_stress_multiplier = 1.35
 else:
-    shear_stress_multiplier = 2.10 # Severe mechanical strain on endothelial cell junctions
+    shear_stress_multiplier = 2.10
 
 st.sidebar.header(" Patient Clinical Cohort")
 cohort_profile = st.sidebar.selectbox(
@@ -96,7 +96,7 @@ def fetch_and_model(latitude, longitude, s_date, e_date, b_gain, m_gain, shear_m
         'Max_Humidity': daily_data['relative_humidity_2m_max']
     })
     
-    # Calculate Environmental Heat Stress and translate to Anomaly parameters
+    # Calculate Environmental Heat Stress Metrics
     df['Heat_Stress_Index'] = df['Max_Temp'] + (0.55 * (df['Max_Humidity']/100) * (df['Max_Temp'] - 14.5))
     df['Anomaly'] = np.clip(df['Heat_Stress_Index'] - 25, 0, None)
     days_timeline = np.arange(len(df))
@@ -106,11 +106,9 @@ def fetch_and_model(latitude, longitude, s_date, e_date, b_gain, m_gain, shear_m
         dt_anomaly = anomaly_data[idx]
         BBB_perm, M1_activation = y[0], y[1]
         
-        # Balance mechanisms for dynamic baseline restoration
         k_bbb_recovery = 0.25 if dt_anomaly == 0 else 0.05
         k_m1_recovery = 0.20 if dt_anomaly == 0 else 0.08
             
-        # Incorporating combined Hemodynamic Shear Strain factors alongside Thermal anomalies
         d_BBB_dt = ((bg * (dt_anomaly + 0.5)) * sm * (1.0 - BBB_perm)) - (k_bbb_recovery * BBB_perm)
         d_M1_dt = (mg * BBB_perm * (1.0 - M1_activation)) - (k_m1_recovery * M1_activation)
         return [d_BBB_dt, d_M1_dt]
@@ -152,12 +150,12 @@ if app_mode == "Single City Deep-Dive":
                     plt.xticks(rotation=45)
                     
                     ax2 = ax1.twinx()
-                    ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Fracture Trend')
-                    ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='M1 Macrophage Spectrum')
+                    ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Disruption')
+                    ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='M1 Activation Spectrum')
                     
                     ax2.fill_between(data['Date'], data['BBB_Low'], data['BBB_High'], color='#2980b9', alpha=0.15)
                     ax2.fill_between(data['Date'], data['M1_Low'], data['M1_High'], color='#2c3e50', alpha=0.15)
-                    ax2.set_ylabel('Pathokinetic Scale Parameters (0-1 Spectrum)', color='#2c3e50')
+                    ax2.set_ylabel('Pathokinetic Scale (0-1 Spectrum)', color='#2c3e50')
                     
                     fig.tight_layout()
                     st.pyplot(fig)
@@ -179,7 +177,7 @@ if app_mode == "Single City Deep-Dive":
                     <p style="font-family: Arial, sans-serif;"><strong>Target Domain Location:</strong> {city_name} (Lat: {lat}, Lon: {lon})</p>
                     <p style="font-family: Arial, sans-serif;"><strong>Patient Stratification Profile:</strong> {cohort_profile}</p>
                     <p style="font-family: Arial, sans-serif;"><strong>Hemodynamic Loading Factor:</strong> {blood_pressure_state}</p>
-                    <hr style="border: 0; border-top: 1px solid #ccc;"/>
+                    <hr style="border: 0; border-top: 1px solid #ccc verso;"/>
                     <h3 style="color: #2980b9; font-family: Arial, sans-serif;">Simulated Quantitative Endpoint Results:</h3>
                     <ul style="font-family: Arial, sans-serif; font-size: 14px;">
                         <li><strong>Peak Atmospheric Heat-Stress Displacement Metric:</strong> {max_stress:.2f} °C above critical threshold parameters.</li>
