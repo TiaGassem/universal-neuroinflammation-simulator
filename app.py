@@ -1,3 +1,18 @@
+# =============================================================================
+# Heat-Stress Neuroinflammation Simulator (Educational, Non-Clinical)
+# =============================================================================
+# Full documentation, honesty notes, parameter sources, and version history
+# live in README.md in this repository -- kept there instead of a long
+# docstring here so this file stays simple to copy/paste/upload without
+# risk of a multi-line string block getting damaged in transfer.
+#
+# ONE-LINE SUMMARY: combines real historical reanalysis weather data with an
+# illustrative ODE model of a proposed heat-stress -> BBB -> microglial-M1
+# pathway. NOT a diagnostic or clinical tool. See README.md for details.
+#
+# Run with: streamlit run app.py
+# =============================================================================
+
 import streamlit as st
 import requests
 import numpy as np
