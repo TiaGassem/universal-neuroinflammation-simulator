@@ -139,32 +139,39 @@ if app_mode == "Single City Deep-Dive":
             if data is not None:
                 c1, c2 = st.columns([2, 1])
                 with c1:
-                    st.subheader(f"Kinetic Curve Profile for: {city_name}")
+                    st.subheader(f" Kinetic Curve Profile for: {city_name}")
                     sns.set_theme(style="whitegrid")
-                    fig, ax1 = plt.subplots(figsize=(10, 4.5))
+                    fig, ax1 = plt.subplots(figsize=(10, 5))
                     
-                    ax1.plot(data['Date'], data['Anomaly'], color='#e74c3c', linewidth=2, label='Thermal Stress Anomaly (°C)')
+                    # Primary Axis - Climate Anomaly
+                    line1 = ax1.plot(data['Date'], data['Anomaly'], color='#e74c3c', linewidth=2, label='Thermal Stress Anomaly (°C)')
                     ax1.set_ylabel('Climate Stress Anomaly (°C)', color='#e74c3c')
-                    plt.xticks(rotation=45)
+                    ax1.tick_params(axis='x', rotation=45)
                     
+                    # Secondary Axis - Pathokinetic Scales
                     ax2 = ax1.twinx()
-                    ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Disruption')
-                    ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='M1 Activation Spectrum')
+                    line2 = ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Fracture Index')
+                    line3 = ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='Microglia M1 State')
                     
+                    # Variance Clouds
                     ax2.fill_between(data['Date'], data['BBB_Low'], data['BBB_High'], color='#2980b9', alpha=0.15)
                     ax2.fill_between(data['Date'], data['M1_Low'], data['M1_High'], color='#2c3e50', alpha=0.15)
                     ax2.set_ylabel('Pathokinetic Scale (0-1 Spectrum)', color='#2c3e50')
                     
-                    fig.legend(loc="upper left", bbox_to_anchor=(0.15, 0.95))
+                    #  FIXED: Combine lines and labels to position cleanly underneath the plot area
+                    lns = line1 + line2 + line3
+                    labs = [l.get_label() for l in lns]
+                    ax1.legend(lns, labs, loc='upper center', bbox_to_anchor=(0.5, -0.25), ncol=3, frameon=True)
+                    
                     fig.tight_layout()
                     st.pyplot(fig)
                     
                     st.markdown("""
                     ###  Rigorous Chart Analysis & Legend Guide
-                    * <span style='color:#e74c3c; font-weight:bold;'>Solid Red Curve (Left Axis):</span> **Atmospheric Thermal Stress Velocity.** Environmental workload tracking above normal homeostasis baselines.
+                    * <span style='color:#e74c3c; font-weight:bold;'> Solid Red Curve (Left Axis):</span> **Atmospheric Thermal Stress Velocity.** Environmental workload tracking above normal homeostasis baselines.
                     * <span style='color:#2980b9; font-weight:bold;'> Dashed Blue Curve (Right Axis):</span> **Blood-Brain Barrier (BBB) Structural Breakdown.** Permeability of tight junctions. Values moving toward 1.0 signal critical barrier cleavage.
                     * <span style='color:#2c3e50; font-weight:bold;'> Solid Black Curve (Right Axis):</span> **Microglial M1 Phenotypic Activation Rate.** Downstream transition into active neurotoxic expressions.
-                    * <span style='color:gray; font-weight:bold;'>░ Shaded Background Bands:</span> **Genomic Distribution Variance Boundaries.** A ±20% uncertainty corridor adjusting for personalized genetic polymorphism density.
+                    * <span style='color:gray; font-weight:bold;'> Shaded Background Bands:</span> **Genomic Distribution Variance Boundaries.** A ±20% uncertainty corridor adjusting for personalized genetic polymorphism density.
                     """, unsafe_allow_html=True)
                     
                 with c2:
@@ -222,7 +229,7 @@ if app_mode == "Single City Deep-Dive":
                 st.error("Data tracking interruption. Validate connectivity details.")
 
 else:
-    st.header(" Multi-City Parallel Comparison System")
+    st.header("Multi-City Parallel Comparison System")
     col_a, col_b = st.columns(2)
     with col_a:
         st.subheader(" Location A")
