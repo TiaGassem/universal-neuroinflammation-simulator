@@ -1,7 +1,7 @@
  Heat-Stress Neuroinflammation Simulator
 
 Launch the live app
-(URL will change once the repo is renamed — see Project Status below)
+ https://universal-neuroinflammation-simulator-qebvnrydyxvbpxavfybq4u.streamlit.app/
 
 
 What this is
