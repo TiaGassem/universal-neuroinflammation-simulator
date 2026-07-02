@@ -6,13 +6,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.integrate import odeint
 
-# ---------------------------------------------------------------------------
-# GLOBAL CONFIGURATION
-# ---------------------------------------------------------------------------
 st.set_page_config(page_title="Heat-Stress Neuroinflammation Simulator (Educational)", layout="wide")
-
 st.title("Heat-Stress Neuroinflammation Simulator")
-st.markdown
+st.markdown("""
 **Author:** Tasnim | Independent student computational project (M.Sc. thesis-adjacent, not part of the official thesis)
 
 This is an educational, hypothesis-generating simulation. It combines real historical
@@ -46,7 +42,7 @@ with st.expander("Model parameter sources and honesty notes (click to expand)"):
 
 
 # ---------------------------------------------------------------------------
-# REVERSE GEOCODING UTILITY (unchanged logic, just a label fix)
+# REVERSE GEOCODING UTILITY
 # ---------------------------------------------------------------------------
 def get_location_name(latitude, longitude):
     """Look up a human-readable place name for display purposes only."""
@@ -95,13 +91,6 @@ cohort_profile = st.sidebar.selectbox(
     ]
 )
 
-# NOTE on rationale text below: these describe the *direction* of published
-# findings (older age and chronic vascular/metabolic conditions are associated
-# with reduced BBB integrity and more reactive microglia). The specific gain
-# values (0.08-0.36 etc.) are this project's own illustrative estimates for
-# producing plausible relative differences between scenarios -- they are NOT
-# values reported in these papers. Citations describe the qualitative
-# reasoning, not the source of the number.
 if cohort_profile == "Baseline (young, no known risk factors)":
     bbb_gain, m1_gain = 0.08, 0.12
     rationale = "Modeled as intact tight junctions and low baseline microglial reactivity."
@@ -126,12 +115,6 @@ st.sidebar.info(f"**Modeling rationale (illustrative, not fitted):** {rationale}
 # ---------------------------------------------------------------------------
 @st.cache_data
 def fetch_and_model(latitude, longitude, s_date, e_date, b_gain, m_gain, shear_mult):
-    """
-    Fetch real historical daily weather data (Open-Meteo archive API, built on
-    ECMWF ERA5 reanalysis) for the given coordinates and date range, compute a
-    simple heat-stress index, and integrate the illustrative two-variable ODE
-    model (BBB permeability, microglial M1 activation) forced by that index.
-    """
     url = (
         f"https://archive-api.open-meteo.com/v1/archive?"
         f"latitude={latitude}&longitude={longitude}&start_date={s_date}&end_date={e_date}"
@@ -151,52 +134,17 @@ def fetch_and_model(latitude, longitude, s_date, e_date, b_gain, m_gain, shear_m
         'Max_Humidity': daily_data['relative_humidity_2m_max']
     })
 
-    # Simplified heat index (Steadman-style approximation) -- a real, standard
-    # meteorological formula, not something invented for this project.
     df['Heat_Stress_Index'] = df['Max_Temp'] + (0.55 * (df['Max_Humidity'] / 100) * (df['Max_Temp'] - 14.5))
     df['Anomaly'] = np.clip(df['Heat_Stress_Index'] - 25, 0, None)
     days_timeline = np.arange(len(df))
 
     def internal_ode(y, t, anomaly_data, bg, mg, sm):
-        """
-        y[0] = BBB permeability (0 = intact, 1 = fully permeable), illustrative
-        y[1] = Microglial M1 activation fraction (0 to 1), illustrative
-
-        BUGFIX vs. previous version: removed a constant "+0.5" offset that was
-        previously added to the anomaly term. That offset meant the model kept
-        driving BBB permeability upward even when anomaly = 0 (no heat stress),
-        which is not the intended behavior -- the barrier should recover toward
-        baseline when there is no stressor. Now it does.
-
-        RECOVERY RATE CONSTANTS -- literature-derived, math shown:
-
-        k_bbb_recovery (no ongoing anomaly) = 0.28 / day
-            Source: Yang et al., "MMP-Mediated Disruption of Claudin-5 in the
-            Blood-Brain Barrier of Rat Brain After Cerebral Ischemia" -- reports
-            a biphasic BBB permeability pattern resolving over up to 120 hours
-            (5 days) post-injury once the acute insult subsides. Approximate
-            structural recovery half-life ~2.5 days.
-            First-order rate constant: k = ln(2) / t_half = 0.693 / 2.5 = 0.28/day.
-
-        k_m1_recovery (no ongoing anomaly) = 0.23 / day
-            Source: Zhang et al. (PMC9392970), [18F]DPA-714 PET imaging of
-            LPS-induced microglial activation in mice -- activation peaked at
-            24h post-injection and had returned to baseline by 72h. Approximate
-            recovery half-life ~3 days.
-            First-order rate constant: k = ln(2) / t_half = 0.693 / 3.0 = 0.23/day.
-
-        The SUPPRESSED recovery rates used while an anomaly is still present
-        (0.05 and 0.08 below) are NOT literature-derived -- no study reports a
-        specific suppression factor for "recovery rate while the stressor is
-        still active." These remain hand-set illustrative assumptions, labeled
-        as such rather than attributed to a source that doesn't support them.
-        """
         idx = int(np.clip(t, 0, len(anomaly_data) - 1))
         dt_anomaly = anomaly_data[idx]
         BBB_perm, M1_activation = y[0], y[1]
 
-        k_bbb_recovery = 0.28 if dt_anomaly == 0 else 0.05   # 0.28 = literature-derived; 0.05 = illustrative assumption
-        k_m1_recovery = 0.23 if dt_anomaly == 0 else 0.08    # 0.23 = literature-derived; 0.08 = illustrative assumption
+        k_bbb_recovery = 0.28 if dt_anomaly == 0 else 0.05
+        k_m1_recovery = 0.23 if dt_anomaly == 0 else 0.08
 
         d_BBB_dt = (bg * dt_anomaly * sm * (1.0 - BBB_perm)) - (k_bbb_recovery * BBB_perm)
         d_M1_dt = (mg * BBB_perm * (1.0 - M1_activation)) - (k_m1_recovery * M1_activation)
@@ -271,7 +219,7 @@ if app_mode == "Single Location Deep-Dive":
                     st.dataframe(data[['Date', 'Anomaly', 'BBB_Leakage', 'Microglia_M1']].style.format(precision=3))
 
                 # -----------------------------------------------------------
-                # SUMMARY (renamed from "Certified Lab Report" and de-clinicalized)
+                # SUMMARY SECTION
                 # -----------------------------------------------------------
                 st.markdown("---")
                 st.subheader("Simulation Summary (Non-Clinical)")
