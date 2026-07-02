@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import requests
 import numpy as np
 import pandas as pd
@@ -139,7 +139,7 @@ if app_mode == "Single City Deep-Dive":
             if data is not None:
                 c1, c2 = st.columns([2, 1])
                 with c1:
-                    st.subheader(f" Kinetic Curve Profile for: {city_name}")
+                    st.subheader(f"Kinetic Curve Profile for: {city_name}")
                     sns.set_theme(style="whitegrid")
                     fig, ax1 = plt.subplots(figsize=(10, 4.5))
                     
@@ -148,8 +148,8 @@ if app_mode == "Single City Deep-Dive":
                     plt.xticks(rotation=45)
                     
                     ax2 = ax1.twinx()
-                    ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Fracture Index')
-                    ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='Microglia M1 State')
+                    ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Disruption')
+                    ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='M1 Activation Spectrum')
                     
                     ax2.fill_between(data['Date'], data['BBB_Low'], data['BBB_High'], color='#2980b9', alpha=0.15)
                     ax2.fill_between(data['Date'], data['M1_Low'], data['M1_High'], color='#2c3e50', alpha=0.15)
@@ -161,14 +161,14 @@ if app_mode == "Single City Deep-Dive":
                     
                     st.markdown("""
                     ###  Rigorous Chart Analysis & Legend Guide
-                    * <span style='color:#e74c3c; font-weight:bold;'> Solid Red Curve (Left Axis):</span> **Atmospheric Thermal Stress Velocity.** Environmental workload tracking above normal homeostasis baselines.
+                    * <span style='color:#e74c3c; font-weight:bold;'>Solid Red Curve (Left Axis):</span> **Atmospheric Thermal Stress Velocity.** Environmental workload tracking above normal homeostasis baselines.
                     * <span style='color:#2980b9; font-weight:bold;'> Dashed Blue Curve (Right Axis):</span> **Blood-Brain Barrier (BBB) Structural Breakdown.** Permeability of tight junctions. Values moving toward 1.0 signal critical barrier cleavage.
                     * <span style='color:#2c3e50; font-weight:bold;'> Solid Black Curve (Right Axis):</span> **Microglial M1 Phenotypic Activation Rate.** Downstream transition into active neurotoxic expressions.
                     * <span style='color:gray; font-weight:bold;'>░ Shaded Background Bands:</span> **Genomic Distribution Variance Boundaries.** A ±20% uncertainty corridor adjusting for personalized genetic polymorphism density.
                     """, unsafe_allow_html=True)
                     
                 with c2:
-                    st.subheader("Automated Matrix Logs")
+                    st.subheader(" Automated Matrix Logs")
                     st.dataframe(data[['Date', 'Anomaly', 'BBB_Leakage', 'Microglia_M1']].style.format(precision=3))
                 
                 # --- NATIVE CLINICAL REPORT DESIGN MODULE WITH DYNAMIC INTERPRETATION ---
@@ -179,7 +179,6 @@ if app_mode == "Single City Deep-Dive":
                 max_bbb = data['BBB_Leakage'].max()
                 max_m1 = data['Microglia_M1'].max()
                 
-                # Dynamic clinical interpretation generator based on thresholds
                 if max_bbb > 0.75:
                     bbb_interpretation = "CRITICAL ENDOTHELIAL SHEAR RUPTURE. Extreme tight-junction destabilization verified. High structural permeability risk."
                 else:
@@ -209,7 +208,7 @@ if app_mode == "Single City Deep-Dive":
                     <ul style="font-family: Arial, sans-serif; font-size: 14px; margin-top: 5px;">
                         <li><strong>Endothelial Barrier Integrity Status:</strong> <span style="font-weight:bold; color:#e67e22;">{bbb_interpretation}</span></li>
                         <li><strong>Neuroimmune Activation Pathway Response:</strong> <span style="font-weight:bold; color:#8e44ad;">{m1_interpretation}</span></li>
-                        <li><strong>Compounded Environmental Risk Analysis:</strong> Environmental heat workload of {max_stress:.2f}°C acts as a strong accelerator, compounding pre-existing baseline hyper-responsiveness. Under high systemic BP loading, microvascular shear stresses worsen structural defects, trapping target brain regions in an active pro-inflammatory feedback loop.</li>
+                        <li><strong>Compounded Environmental Risk Analysis:</strong> Environmental heat workload of {max_stress:.2f}°C acts as a strong accelerator, compounding pre-existing baseline hyper-responsiveness. Under high systolic blood pressure loading, microvascular shear stresses worsen structural defects, trapping target brain regions in an active pro-inflammatory feedback loop.</li>
                     </ul>
                     
                     <p style="font-size: 11px; color: #7f8c8d; font-family: Arial, sans-serif; margin-bottom: 0; margin-top: 15px;">
@@ -226,7 +225,7 @@ else:
     st.header(" Multi-City Parallel Comparison System")
     col_a, col_b = st.columns(2)
     with col_a:
-        st.subheader("Location A")
+        st.subheader(" Location A")
         lat_a = st.number_input("Lat A", value=36.8065, format="%.4f")
         lon_a = st.number_input("Lon A", value=10.1815, format="%.4f")
     with col_b:
