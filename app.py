@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import requests
 import numpy as np
 import pandas as pd
@@ -183,7 +183,7 @@ if app_mode == "Single Location Deep-Dive":
         with st.spinner("Fetching reanalysis weather data and integrating model..."):
             data = fetch_and_model(lat, lon, start_date, end_date, bbb_gain, m1_gain, shear_stress_multiplier)
             if data is not None:
-                # Clear all previous figures to ensure no silent buffer crashes
+                # Clear previous active buffers
                 plt.close('all')
                 
                 c1, c2 = st.columns([2, 1])
@@ -210,7 +210,7 @@ if app_mode == "Single Location Deep-Dive":
 
                     fig.tight_layout()
                     st.pyplot(fig)
-                    plt.close(fig) # Secure garbage collection
+                    plt.close(fig) # Prevent interface memory leaks
 
                     st.markdown("""
                     ### Rigorous Chart Analysis & Legend Guide
@@ -230,7 +230,6 @@ if app_mode == "Single Location Deep-Dive":
                 st.markdown("---")
                 st.header("TRANSLATIONAL BIOMEDICAL PREDICTIVE REPORT")
                 
-                # Metadata Metrics Block
                 meta_col1, meta_col2, meta_col3 = st.columns(3)
                 with meta_col1:
                     st.metric("Target Domain Location", f"{city_name} (Lat: {lat}, Lon: {lon})")
@@ -243,7 +242,6 @@ if app_mode == "Single Location Deep-Dive":
                 max_bbb = data['BBB_Leakage'].max()
                 max_m1 = data['Microglia_M1'].max()
 
-                # Pathokinetic logic mapping
                 if max_bbb > 0.75:
                     bbb_status = "CRITICAL ENDOTHELIAL SHEAR STRESS METRICS OBSERVED"
                     bbb_color = "red"
@@ -258,7 +256,6 @@ if app_mode == "Single Location Deep-Dive":
                     m1_status = "REGULATED PATHWAY TRAJECTORY MAINTAINED"
                     m1_color = "green"
 
-                # Core Report Rendering
                 rep_col1, rep_col2 = st.columns(2)
                 with rep_col1:
                     st.subheader("Simulated Quantitative Endpoint Results")
@@ -278,7 +275,6 @@ if app_mode == "Single Location Deep-Dive":
 
                 st.caption("*Verification Parameter Disclosure Note: Rates calibrated dynamically utilizing foundational cellular acceleration guidelines from Montagne et al. and Perry & Holmes qualitative directions.*")
 
-                # Reconstruct Plain Text Download Data Block
                 raw_download_text = f"""TRANSLATIONAL BIOMEDICAL PREDICTIVE REPORT -- SIMULATION OUTPUT
 ================================================================================
 Target Domain Location: {city_name} (Lat: {lat}, Lon: {lon})
