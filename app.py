@@ -31,11 +31,11 @@ def get_location_name(latitude, longitude):
 st.sidebar.header(" Simulation Core Mode")
 app_mode = st.sidebar.radio("Select Analytics View:", ["Single City Deep-Dive", "Multi-City Contrast Analytics"])
 
-st.sidebar.header(" Timeline Parameters")
+st.sidebar.header("Timeline Parameters")
 start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2025-07-01"))
 end_date = st.sidebar.date_input("End Date", pd.to_datetime("2025-07-20"))
 
-st.sidebar.header(" Hemodynamic Variables")
+st.sidebar.header("Hemodynamic Variables")
 blood_pressure_state = st.sidebar.selectbox(
     "Patient Hemodynamic Baseline:",
     ["Normotensive (120 mmHg Systolic)", "Pre-Hypertensive (135 mmHg Systolic)", "Hypertensive Crisis (180 mmHg Systolic)"]
@@ -150,15 +150,15 @@ if app_mode == "Single City Deep-Dive":
                     
                     # Secondary Axis - Pathokinetic Scales
                     ax2 = ax1.twinx()
-                    line2 = ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Fracture Index')
-                    line3 = ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='Microglia M1 State')
+                    line2 = ax2.plot(data['Date'], data['BBB_Leakage'], color='#2980b9', linewidth=2.5, linestyle='--', label='BBB Disruption')
+                    line3 = ax2.plot(data['Date'], data['Microglia_M1'], color='#2c3e50', linewidth=3, label='M1 Activation Spectrum')
                     
                     # Variance Clouds
                     ax2.fill_between(data['Date'], data['BBB_Low'], data['BBB_High'], color='#2980b9', alpha=0.15)
                     ax2.fill_between(data['Date'], data['M1_Low'], data['M1_High'], color='#2c3e50', alpha=0.15)
                     ax2.set_ylabel('Pathokinetic Scale (0-1 Spectrum)', color='#2c3e50')
                     
-                    #  FIXED: Combine lines and labels to position cleanly underneath the plot area
+                    # Legend arrangement beneath chart space
                     lns = line1 + line2 + line3
                     labs = [l.get_label() for l in lns]
                     ax1.legend(lns, labs, loc='upper center', bbox_to_anchor=(0.5, -0.25), ncol=3, frameon=True)
@@ -178,8 +178,7 @@ if app_mode == "Single City Deep-Dive":
                     st.subheader(" Automated Matrix Logs")
                     st.dataframe(data[['Date', 'Anomaly', 'BBB_Leakage', 'Microglia_M1']].style.format(precision=3))
                 
-                # --- NATIVE CLINICAL REPORT DESIGN MODULE WITH DYNAMIC INTERPRETATION ---
-               # --- NATIVE CLINICAL REPORT DESIGN MODULE WITH DYNAMIC INTERPRETATION ---
+                # --- CLINICAL REPORT EXPORT ENGINE ---
                 st.markdown("---")
                 st.subheader(" Professional Medical Report Summary")
                 
@@ -197,13 +196,13 @@ if app_mode == "Single City Deep-Dive":
                 else:
                     m1_interpretation = "CONTROLLED IMMUNE PATHWAY. Chronic priming limits active neurotoxic translation within safe operational bounds."
 
-                # Raw Text Format Built dynamically for clean native local file generation
+                # Clean text layout formatted specifically for clean clinical print-outs
                 raw_download_text = f"""TRANSLATIONAL BIOMEDICAL PREDICTIVE REPORT
-==========================================
+============================================================
 Target Domain Location: {city_name} (Lat: {lat}, Lon: {lon})
 Patient Stratification Profile: {cohort_profile}
 Hemodynamic Loading Factor: {blood_pressure_state}
-------------------------------------------
+------------------------------------------------------------
 
 Simulated Quantitative Endpoint Results:
 * Peak Atmospheric Heat-Stress Displacement Metric: {max_stress:.2f} °C above baseline threshold parameters.
@@ -215,43 +214,87 @@ Automated Pathokinetic Interpretation:
 * Neuroimmune Activation Pathway Response: {m1_interpretation}
 * Compounded Environmental Risk Analysis: Environmental heat workload of {max_stress:.2f}°C acts as a strong accelerator, compounding pre-existing baseline hyper-responsiveness. Under high systolic blood pressure loading, microvascular shear stresses worsen structural defects, trapping target brain regions in an active pro-inflammatory feedback loop.
 
-------------------------------------------
+------------------------------------------------------------
 *Verification Parameter Disclosure Note: Rates calibrated dynamically utilizing foundational cellular acceleration guidelines from Montagne et al. and Perry & Holmes literature sets. Uncertainty cloud arrays model polymorphic distribution intervals.
 """
 
-                html_report = f"""
-                <div style="border: 2px solid #2c3e50; padding: 25px; background-color: #fafafa; border-radius: 10px; margin-bottom: 20px;">
-                    <h2 style="color: #2c3e50; font-family: Arial, sans-serif; margin-top:0;">TRANSLATIONAL BIOMEDICAL PREDICTIVE REPORT</h2>
-                    <p style="font-family: Arial, sans-serif;"><strong>Target Domain Location:</strong> {city_name} (Lat: {lat}, Lon: {lon})</p>
-                    <p style="font-family: Arial, sans-serif;"><strong>Patient Stratification Profile:</strong> {cohort_profile}</p>
-                    <p style="font-family: Arial, sans-serif;"><strong>Hemodynamic Loading Factor:</strong> {blood_pressure_state}</p>
-                    <hr style="border: 0; border-top: 1px solid #ccc;"/>
-                    
-                    <h3 style="color: #2980b9; font-family: Arial, sans-serif; margin-bottom: 5px;">Simulated Quantitative Endpoint Results:</h3>
-                    <ul style="font-family: Arial, sans-serif; font-size: 14px; margin-top: 5px;">
-                        <li><strong>Peak Atmospheric Heat-Stress Displacement Metric:</strong> {max_stress:.2f} °C above baseline threshold parameters.</li>
-                        <li><strong>Maximum Predicted Endothelial Disruption Index (BBB Leakage velocity):</strong> {(max_bbb*100):.1f}% functional breakdown variance.</li>
-                        <li><strong>Peak Simulated Microglial M1 Phenotypic Transgression Matrix:</strong> {(max_m1*100):.1f}% state cellular activation.</li>
-                    </ul>
-                    
-                    <h3 style="color: #2c3e50; font-family: Arial, sans-serif; margin-bottom: 5px;">Automated Pathokinetic Interpretation:</h3>
-                    <ul style="font-family: Arial, sans-serif; font-size: 14px; margin-top: 5px;">
-                        <li><strong>Endothelial Barrier Integrity Status:</strong> <span style="font-weight:bold; color:#e67e22;">{bbb_interpretation}</span></li>
-                        <li><strong>Neuroimmune Activation Pathway Response:</strong> <span style="font-weight:bold; color:#8e44ad;">{m1_interpretation}</span></li>
-                        <li><strong>Compounded Environmental Risk Analysis:</strong> Environmental heat workload of {max_stress:.2f}°C acts as a strong accelerator, compounding pre-existing baseline hyper-responsiveness. Under high systolic blood pressure loading, microvascular shear stresses worsen structural defects, trapping target brain regions in an active pro-inflammatory feedback loop.</li>
-                    </ul>
-                    
-                    <p style="font-size: 11px; color: #7f8c8d; font-family: Arial, sans-serif; margin-bottom: 0; margin-top: 15px;">
-                        *Verification Parameter Disclosure Note: Rates calibrated dynamically utilizing foundational cellular acceleration guidelines from Montagne et al. and Perry & Holmes literature sets. Uncertainty cloud arrays model polymorphic distribution intervals.
-                    </p>
-                </div>
-                """
-                st.markdown(html_report, unsafe_allow_html=True)
+                # Rendered visual report panel on the application page using correct markdown parameters
+                st.markdown(f"""
+                ### Translational Biomedical Predictive Report
+                * **Target Domain Location:** {city_name} (Lat: {lat}, Lon: {lon})
+                * **Patient Stratification Profile:** {cohort_profile}
+                * **Hemodynamic Loading Factor:** {blood_pressure_state}
                 
-                #  THE PLUG-IN AUTOMATED BOX DOWNLOAD BUTTON
+                #### Simulated Quantitative Endpoint Results
+                * **Peak Atmospheric Heat-Stress Displacement Metric:** {max_stress:.2f} °C above baseline threshold parameters.
+                * **Maximum Predicted Endothelial Disruption Index (BBB Leakage velocity):** {(max_bbb*100):.1f}% functional breakdown variance.
+                * **Peak Simulated Microglial M1 Phenotypic Transgression Matrix:** {(max_m1*100):.1f}% state cellular activation.
+                
+                #### Automated Pathokinetic Interpretation
+                * **Endothelial Barrier Integrity Status:** `{bbb_interpretation}`
+                * **Neuroimmune Activation Pathway Response:** `{m1_interpretation}`
+                * **Compounded Environmental Risk Analysis:** Environmental heat workload of {max_stress:.2f}°C acts as a strong accelerator, compounding pre-existing baseline hyper-responsiveness. Under high systolic blood pressure loading, microvascular shear stresses worsen structural defects, trapping target brain regions in an active pro-inflammatory feedback loop.
+                
+                ---
+                *Verification Parameter Disclosure Note: Rates calibrated dynamically utilizing foundational cellular acceleration guidelines from Montagne et al. and Perry & Holmes literature sets. Uncertainty cloud arrays model polymorphic distribution intervals.*
+                """)
+                
+                # Automated download block container placement
                 st.download_button(
-                    label=" Export Clinical Report Lab Summary (.txt / .doc)",
+                    label=" Download Certified Lab Report Artifact (.txt / .doc)",
                     data=raw_download_text,
                     file_name=f"Pathokinetic_Report_{city_name.replace(' ', '_')}.txt",
                     mime="text/plain"
                 )
+            else:
+                st.error("Data tracking interruption. Validate connectivity details.")
+
+else:
+    st.header(" Multi-City Parallel Comparison System")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.subheader(" Location A")
+        lat_a = st.number_input("Lat A", value=36.8065, format="%.4f")
+        lon_a = st.number_input("Lon A", value=10.1815, format="%.4f")
+    with col_b:
+        st.subheader("Location B")
+        lat_b = st.number_input("Lat B", value=50.8503, format="%.4f")
+        lon_b = st.number_input("Lon B", value=4.3517, format="%.4f")
+        
+    city_a_name = get_location_name(lat_a, lon_a)
+    city_b_name = get_location_name(lat_b, lon_b)
+        
+    if st.button(" Execute Cross-Comparison Engine"):
+        with st.spinner("Processing parallel satellite caches..."):
+            df_a = fetch_and_model(lat_a, lon_a, start_date, end_date, bbb_gain, m1_gain, shear_stress_multiplier)
+            df_b = fetch_and_model(lat_b, lon_b, start_date, end_date, bbb_gain, m1_gain, shear_stress_multiplier)
+            
+            if df_a is not None and df_b is not None:
+                st.subheader(f" Comparative Neuroinflammatory Metrics [{cohort_profile}]")
+                fig_comp, (ax_bbb, ax_m1) = plt.subplots(1, 2, figsize=(14, 5))
+                
+                # Plot BBB comparison
+                ax_bbb.plot(df_a['Date'], df_a['BBB_Leakage'], label=f"{city_a_name}", color="#e67e22", linewidth=2.5)
+                ax_bbb.plot(df_b['Date'], df_b['BBB_Leakage'], label=f"{city_b_name}", color="#9b59b6", linewidth=2.5, linestyle="--")
+                ax_bbb.set_title("Blood-Brain Barrier Permeability Overlap")
+                ax_bbb.set_ylabel("Leakage Index (0-1 Range)")
+                ax_bbb.legend()
+                ax_bbb.tick_params(axis='x', rotation=45)
+                
+                # Plot Microglia comparison
+                ax_m1.plot(df_a['Date'], df_a['Microglia_M1'], label=f"{city_a_name}", color="#e67e22", linewidth=2.5)
+                ax_m1.plot(df_b['Date'], df_b['Microglia_M1'], label=f"{city_b_name}", color="#9b59b6", linewidth=2.5, linestyle="--")
+                ax_m1.set_title("Microglial M1 Activation Line Comparisons")
+                ax_m1.set_ylabel("Activation Spectrum (0-1 Range)")
+                ax_m1.legend()
+                ax_m1.tick_params(axis='x', rotation=45)
+                
+                fig_comp.tight_layout()
+                st.pyplot(fig_comp)
+                
+                st.markdown("""
+                ###  Comparative Analytics Interpretation Legend
+                * **Solid Orange Line:** Paths plotted for **Location A** ($36.8065, 10.1815$, or custom coordinates).
+                * **Dashed Purple Line:** Parallel values tracked for **Location B** ($50.8503, 4.3517$, or custom coordinates).
+                * **Cross-Analysis Framework:** Evaluates identical patient cohorts exposed to two completely separate environmental workloads simultaneously to isolate geographical safety parameters.
+                """)
