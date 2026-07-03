@@ -187,10 +187,9 @@ if app_mode == "Single Location Deep-Dive":
                 
                 c1, c2 = st.columns([2, 1])
                 with c1:
-                    st.subheader(f" Simulated Kinetic Projections: {city_name}")
+                    st.subheader(f"📈 Simulated Kinetic Projections: {city_name}")
                     sns.set_theme(style="whitegrid")
                     
-                    # Increased plot width to make space for external legend positioning
                     fig, ax1 = plt.subplots(figsize=(11, 5.5))
 
                     line1 = ax1.plot(data['Date'], data['Anomaly'], color='#e74c3c', linewidth=2, label='Heat-Stress Index Anomaly (°C-equiv.)')
@@ -206,10 +205,10 @@ if app_mode == "Single Location Deep-Dive":
                     ax2.set_ylabel('Simulated Activation Scale (0.0 - 1.0)', color='#2c3e50', fontweight='bold')
                     ax2.set_ylim(-0.05, 1.05)
 
-                    # FIXED: Legend pushed entirely under the chart to avoid obscuring peaks
+                    # FIXED: Correct string location type and layout mapping logic
                     lns = line1 + line2 + line3
                     labs = [l.get_label() for l in lns]
-                    ax1.legend(lns, labs, loc='upper upper', bbox_to_anchor=(0.5, -0.2), ncol=3, frameon=True)
+                    ax1.legend(lns, labs, loc='upper center', bbox_to_anchor=(0.5, -0.25), ncol=3, frameon=True)
 
                     fig.tight_layout()
                     st.pyplot(fig)
@@ -273,7 +272,7 @@ if app_mode == "Single Location Deep-Dive":
                         st.info(f"**Peak Microglial M1 Pro-Inflammatory Transgression:** {(max_m1*100):.1f}% functional polarization.")
 
                 with rep_right:
-                    st.markdown("###  Automated Pathokinetic Interpretation")
+                    st.markdown("### Automated Pathokinetic Interpretation")
                     st.markdown(f"**Endothelial Barrier State:** `{bbb_status}`")
                     st.caption("The simulation engine maps accelerated junction disassembly rates mirroring structural vessel leak profiles during high sustained atmospheric workloads.")
                     
@@ -307,7 +306,7 @@ AUTOMATED PATHOKINETIC INTERPRETATION:
 DISCLAIMER: Non-clinical, non-predictive portfolio simulation. Rate constants are illustrative estimates and are not fitted to real clinical patient matrices.
 """
                 st.markdown("---")
-                st.markdown("### Export Structural Report Artifact")
+                st.markdown("###  Export Structural Report Artifact")
                 st.download_button(
                     label=" Download Academic Report Data (.txt)",
                     data=raw_download_text,
@@ -321,7 +320,7 @@ DISCLAIMER: Non-clinical, non-predictive portfolio simulation. Rate constants ar
 # FRONTEND: TWO-LOCATION COMPARISON VIEW
 # ---------------------------------------------------------------------------
 else:
-    st.header(" Two-Location Comparison")
+    st.header("Two-Location Comparison")
     col_a, col_b = st.columns(2)
     with col_a:
         st.subheader("Location A")
